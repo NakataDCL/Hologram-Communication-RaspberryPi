@@ -8,7 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
 
-public class TCPServer : MonoBehaviour {
+public class TCPServerTest : MonoBehaviour {
 
   private string _txtLogFilePath;
   private string _byteLogFilePath;
