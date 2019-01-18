@@ -12,6 +12,8 @@ public class TCPServer : MonoBehaviour {
 
   private string _txtLogFilePath;
   private string _byteLogFilePath;
+  private string _pngPath;
+
   private TcpListener _listener;
   private readonly List<TcpClient> _clients = new List<TcpClient> ();
 
@@ -20,6 +22,9 @@ public class TCPServer : MonoBehaviour {
     // logファイルのパスを取得
     _txtLogFilePath = Application.dataPath + "/Log/log.txt";
     _byteLogFilePath = Application.dataPath + "/Log/log";
+
+    // 画像ファイルの保存先のパスを取得
+    _pngPath = Application.dataPath + "/Img/img.png";
 
     // Serverの待ち受けを開始
     StartServerListening ("127.0.0.1", 8080);
@@ -59,12 +64,21 @@ public class TCPServer : MonoBehaviour {
     int data_size = BitConverter.ToInt32 (b_data_size, 0);
     Debug.Log ("data size: " + data_size);
 
-    // バイナリデータを読み込み(size: 65536[byte])
-    byte[] b_data = new byte[65536];
+    // バイナリデータを受信(size: 65536[byte])
+    // byte[] b_data = new byte[65536];
+    byte[] b_data = new byte[data_size]; // data_size + 1 の可能性あり
     stream.Read (b_data, 0, data_size);
 
     // logファイルに受信したデータを出力する
-    byteSave (b_data);
+    ByteSave (b_data);
+
+    // 受信したデータをbase64デコード(画像データ)
+    string base64Text = Encoding.UTF8.GetString (b_data);
+    Debug.Log (base64Text);
+    byte[] decodedByte = Convert.FromBase64String (base64Text);
+
+    // 画像データを保存
+    PngSave (decodedByte);
 
     // 受信したことを通知
     var resMsg = "successfully received";
@@ -136,7 +150,7 @@ public class TCPServer : MonoBehaviour {
   }
 
   // 引数でStringを渡してやる
-  public void textSave (string txt) {
+  public void TextSave (string txt) {
     FileInfo fi = new FileInfo (_txtLogFilePath);
 
     StreamWriter sw;
@@ -146,10 +160,23 @@ public class TCPServer : MonoBehaviour {
     sw.Close ();
   }
 
-  public void byteSave (byte[] b) {
-    Debug.Log ("save log: " + b.Length);
+  public void ByteSave (byte[] b) {
+    Debug.Log ("save log: " + b.Length + "[byte]");
 
     FileInfo fi = new FileInfo (_byteLogFilePath);
+
+    FileStream fs = fi.Create ();
+    BinaryWriter writer = new BinaryWriter (fs, Encoding.UTF8);
+
+    writer.Write (b);
+    writer.Flush ();
+    writer.Close ();
+  }
+
+  public void PngSave (byte[] b) {
+    Debug.Log ("save image");
+
+    FileInfo fi = new FileInfo (_pngPath);
 
     FileStream fs = fi.Create ();
     BinaryWriter writer = new BinaryWriter (fs, Encoding.UTF8);
