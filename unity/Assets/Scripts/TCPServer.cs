@@ -9,11 +9,19 @@ using System.Text;
 using UnityEngine;
 
 public class TCPServer : MonoBehaviour {
+
+  private string _txtLogFilePath;
+  private string _byteLogFilePath;
   private TcpListener _listener;
   private readonly List<TcpClient> _clients = new List<TcpClient> ();
 
   // Use this for initialization
   void Start () {
+    // logファイルのパスを取得
+    _txtLogFilePath = Application.dataPath + "/Log/log.txt";
+    _byteLogFilePath = Application.dataPath + "/Log/log";
+
+    // Serverの待ち受けを開始
     StartServerListening ("127.0.0.1", 8080);
   }
 
@@ -44,13 +52,28 @@ public class TCPServer : MonoBehaviour {
 
     // bytestreamの読み込み
     NetworkStream stream = client.GetStream ();
-    byte[] data = new byte[1024];
 
     // バイナリデータのサイズをチェック(int: 4[byte])
     byte[] b_data_size = new byte[4];
     stream.Read (b_data_size, 0, 4);
     int data_size = BitConverter.ToInt32 (b_data_size, 0);
     Debug.Log ("data size: " + data_size);
+
+    // バイナリデータを読み込み(size: 65536[byte])
+    byte[] b_data = new byte[65536];
+    stream.Read (b_data, 0, data_size);
+
+    // logファイルに受信したデータを出力する
+    byteSave (b_data);
+
+    // 受信したことを通知
+    var resMsg = "successfully received";
+    var body = Encoding.UTF8.GetBytes (resMsg);
+    try {
+      stream.Write (body, 0, body.Length);
+    } catch {
+      _clients.Remove (client);
+    }
 
     // using (MemoryStream ms = new MemoryStream ()) {
 
@@ -110,5 +133,29 @@ public class TCPServer : MonoBehaviour {
     }
 
     _listener.Stop ();
+  }
+
+  // 引数でStringを渡してやる
+  public void textSave (string txt) {
+    FileInfo fi = new FileInfo (_txtLogFilePath);
+
+    StreamWriter sw;
+    sw = fi.AppendText ();
+    sw.WriteLine (txt);
+    sw.Flush ();
+    sw.Close ();
+  }
+
+  public void byteSave (byte[] b) {
+    Debug.Log ("save log: " + b.Length);
+
+    FileInfo fi = new FileInfo (_byteLogFilePath);
+
+    FileStream fs = fi.Create ();
+    BinaryWriter writer = new BinaryWriter (fs, Encoding.UTF8);
+
+    writer.Write (b);
+    writer.Flush ();
+    writer.Close ();
   }
 }

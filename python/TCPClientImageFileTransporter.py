@@ -16,8 +16,8 @@ data = file.read()
 file.close()
 
 byte_arr = base64.b64encode(data)
-print(len(byte_arr))
-
+print(str(len(byte_arr)) + "[byte]")
+//print(byte_arr)
 
 # clientオブジェクトの作成
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
