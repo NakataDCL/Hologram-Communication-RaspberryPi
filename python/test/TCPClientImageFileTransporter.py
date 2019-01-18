@@ -8,7 +8,7 @@ host = "localhost"
 port = 8080
 
 # 送信する画像のファイルパス
-img_path = "./img/chunchun_evening.png"
+img_path = "../img/chunchun_evening.png"
 
 # 画像ファイルをバイナリモードで開き、base64にエンコード
 file = open(img_path, "rb")

@@ -1,6 +1,6 @@
 import base64
 
-txt_path = "./doc/test.txt"
+txt_path = "../doc/test.txt"
 
 # テキストファイルをバイナリモードで開く
 file = open(txt_path, "rb")
