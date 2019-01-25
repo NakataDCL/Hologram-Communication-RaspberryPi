@@ -16,4 +16,6 @@ class ImageManager:
 
     # byte配列の画像をndarray型に変換する
     def encode_byte_img(self, b_img):
-        return cv2.imdecode(np.frombuffer(b_img, np.uint8), -1)
+        print(type(b_img))
+        return cv2.imdecode(b_img, -1)
+        # return cv2.imdecode(np.frombuffer(b_img, np.int64), -1)

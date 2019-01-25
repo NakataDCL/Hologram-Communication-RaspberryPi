@@ -14,16 +14,21 @@ tcp_client = TcpClient(host_ip, port)
 tcp_client.connect()
 
 while True:
-    # 画像を受信
-    b_img = tcp_client.receive_byte_arr()
+    # base64のbyte配列を受信
+    b64_data = tcp_client.receive_byte_arr()
+    print(len(b64_data))
 
-    print(len(b_img))
+    # base64データをデコード
+    b64decoded_data = base64.b64decode(b64_data)
+    print(len(b64decoded_data))
 
-    # 画像データをデコード
-    b64decoded_img = base64.b64decode(b_img)
+    file = open("./data", "wb")
+    file.write(b64decoded_data)
+    file.close()
 
-    # 画像データをndarrayに変換
-    img = im.encode_byte_img(b64decoded_img)
+    img = im.encode_byte_img(b64_data)
+
+    # base64データをndarrayに変換
     print(type(img))
 
     # ウィンドウをアップデート

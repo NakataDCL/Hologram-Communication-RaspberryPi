@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class ScreenStreemingTest : MonoBehaviour {
+	private string _byteLogFilePath;
 	private TcpListener _listener;
 	private readonly List<TcpClient> _clients = new List<TcpClient> ();
 	private Texture2D _texture = null;
@@ -21,6 +22,9 @@ public class ScreenStreemingTest : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		// logファイルのパスを取得
+		_byteLogFilePath = Application.dataPath + "/Log/log";
+
 		// Serverの待ち受けを開始
 		StartServerListening ("127.0.0.1", 8081);
 
@@ -72,13 +76,17 @@ public class ScreenStreemingTest : MonoBehaviour {
 
 			// base64に変換
 			string str = Convert.ToBase64String (_b_screenshot);
-			byte[] bytes = Convert.FromBase64String (str);
+			byte[] bytes = System.Text.Encoding.UTF8.GetBytes (str);
 
 			// バイナリのサイズを通知(int: 4[byte])
 			int len = bytes.Length;
 			byte[] b_len = BitConverter.GetBytes (len);
 			Debug.Log (len);
 			stream.Write (b_len, 0, 4);
+
+			// for debug
+			ByteSave (bytes);
+			Debug.Log (bytes);
 
 			// バイナリデータを送信
 			stream.Write (bytes, 0, len);
@@ -115,5 +123,18 @@ public class ScreenStreemingTest : MonoBehaviour {
 
 		// 画面に適用
 		raw.texture = _texture;
+	}
+
+	public void ByteSave (byte[] b) {
+		Debug.Log ("save log: " + b.Length + "[byte]");
+
+		FileInfo fi = new FileInfo (_byteLogFilePath);
+
+		FileStream fs = fi.Create ();
+		BinaryWriter writer = new BinaryWriter (fs, Encoding.UTF8);
+
+		writer.Write (b);
+		writer.Flush ();
+		writer.Close ();
 	}
 }
