@@ -10,11 +10,11 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class ScreenStreemingTest : MonoBehaviour {
-
 	private TcpListener _listener;
 	private readonly List<TcpClient> _clients = new List<TcpClient> ();
+	private Texture2D _texture = null;
 
-	private Texture2D _texture;
+	private byte[] _b_screenshot;
 
 	[SerializeField]
 	public RawImage raw;
@@ -33,6 +33,11 @@ public class ScreenStreemingTest : MonoBehaviour {
 	void Update () {
 		// スクリーンショットの更新を開始
 		StartCoroutine ("LoadScreenshot");
+
+		if (_texture != null) {
+			// 画面のスクリーンショットをPNGにエンコード
+			_b_screenshot = _texture.EncodeToPNG ();
+		}
 	}
 
 	// ソケット接続準備、待機
@@ -60,13 +65,25 @@ public class ScreenStreemingTest : MonoBehaviour {
 
 		// クライアントとの接続が切れるまで繰り返す
 		while (client.Connected) {
-			// 画面のスクリーンショットを取得
+			if (_b_screenshot == null || _b_screenshot.Length <= 0) {
+				Debug.Log ("_b_screenshot: " + _b_screenshot.Length);
+				continue;
+			}
 
 			// base64に変換
+			string str = Convert.ToBase64String (_b_screenshot);
+			byte[] bytes = Convert.FromBase64String (str);
 
 			// バイナリのサイズを通知(int: 4[byte])
+			int len = bytes.Length;
+			byte[] b_len = BitConverter.GetBytes (len);
+			Debug.Log (len);
+			stream.Write (b_len, 0, 4);
 
 			// バイナリデータを送信
+			stream.Write (bytes, 0, len);
+
+			// クライアントからのレスポンスを受信
 
 			// クライアントの接続が切れたら
 			if (client.Client.Poll (1000, SelectMode.SelectRead) && (client.Client.Available == 0)) {
@@ -91,11 +108,12 @@ public class ScreenStreemingTest : MonoBehaviour {
 		yield return new WaitForEndOfFrame ();
 
 		_texture = new Texture2D (Screen.width / 2, Screen.height / 2);
-		Debug.Log (Screen.width / 2 + ", " + Screen.height / 2);
+		// Debug.Log (Screen.width / 2 + ", " + Screen.height / 2);
 
 		_texture.ReadPixels (new Rect (0, 0, Screen.width / 2, Screen.height / 2), 0, 0);
 		_texture.Apply ();
 
+		// 画面に適用
 		raw.texture = _texture;
 	}
 }

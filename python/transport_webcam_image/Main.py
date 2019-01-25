@@ -14,8 +14,6 @@ wc = WebcamController(100, 100)
 tcp_client = TcpClient(host_ip, port)
 tcp_client.connect()
 
-# while True:
-
 for i in range(5):
     # カメラ画像を取得
     img_byte = wc.get_camera_image()
