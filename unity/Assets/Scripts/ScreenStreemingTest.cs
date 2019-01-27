@@ -27,10 +27,6 @@ public class ScreenStreemingTest : MonoBehaviour {
 
 		// Serverの待ち受けを開始
 		StartServerListening ("127.0.0.1", 8081);
-
-		// rawimageの設定
-		raw.color = Color.white;
-		raw.texture = _texture;
 	}
 
 	// Update is called once per frame
@@ -84,10 +80,6 @@ public class ScreenStreemingTest : MonoBehaviour {
 			Debug.Log (len);
 			stream.Write (b_len, 0, 4);
 
-			// for debug
-			ByteSave (bytes);
-			Debug.Log (bytes);
-
 			// バイナリデータを送信
 			stream.Write (bytes, 0, len);
 
@@ -115,14 +107,11 @@ public class ScreenStreemingTest : MonoBehaviour {
 	IEnumerator LoadScreenshot () {
 		yield return new WaitForEndOfFrame ();
 
-		_texture = new Texture2D (Screen.width / 2, Screen.height / 2);
+		_texture = new Texture2D (Screen.width, Screen.height);
 		// Debug.Log (Screen.width / 2 + ", " + Screen.height / 2);
 
-		_texture.ReadPixels (new Rect (0, 0, Screen.width / 2, Screen.height / 2), 0, 0);
+		_texture.ReadPixels (new Rect (0, 0, Screen.width, Screen.height), 0, 0);
 		_texture.Apply ();
-
-		// 画面に適用
-		raw.texture = _texture;
 	}
 
 	public void ByteSave (byte[] b) {
