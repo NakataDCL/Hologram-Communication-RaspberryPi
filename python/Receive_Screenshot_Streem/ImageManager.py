@@ -13,9 +13,10 @@ class ImageManager:
 
     def update_window(self, img):
         cv2.imshow(self._window_name, img)
+        cv2.waitKey(1)
 
     # byte配列の画像をndarray型に変換する
     def encode_byte_img(self, b_img):
-        print(type(b_img))
-        return cv2.imdecode(b_img, -1)
-        # return cv2.imdecode(np.frombuffer(b_img, np.int64), -1)
+        nparr = np.fromstring(b_img, np.uint8)
+        img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        return img_np

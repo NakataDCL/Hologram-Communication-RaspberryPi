@@ -16,20 +16,12 @@ tcp_client.connect()
 while True:
     # base64のbyte配列を受信
     b64_data = tcp_client.receive_byte_arr()
-    print(len(b64_data))
 
     # base64データをデコード
-    b64decoded_data = base64.b64decode(b64_data)
-    print(len(b64decoded_data))
+    b_data = base64.b64decode(b64_data)
 
-    file = open("./data", "wb")
-    file.write(b64decoded_data)
-    file.close()
-
-    img = im.encode_byte_img(b64_data)
-
-    # base64データをndarrayに変換
-    print(type(img))
+    # ndarrayに変換
+    img_arr = im.encode_byte_img(b_data)
 
     # ウィンドウをアップデート
-    im.update_window(img)
+    im.update_window(img_arr)
