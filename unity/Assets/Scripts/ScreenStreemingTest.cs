@@ -71,8 +71,9 @@ public class ScreenStreemingTest : MonoBehaviour {
 			}
 
 			// base64に変換
-			string str = Convert.ToBase64String (_b_screenshot);
-			byte[] bytes = System.Text.Encoding.UTF8.GetBytes (str);
+			// string str = Convert.ToBase64String (_b_screenshot);
+			// byte[] bytes = System.Text.Encoding.UTF8.GetBytes (str);
+			byte[] bytes = _b_screenshot;
 
 			// バイナリのサイズを通知(int: 4[byte])
 			int len = bytes.Length;

@@ -18,10 +18,11 @@ while True:
     b64_data = tcp_client.receive_byte_arr()
 
     # base64データをデコード
-    b_data = base64.b64decode(b64_data)
+    # b_data = base64.b64decode(b64_data)
 
     # ndarrayに変換
-    img_arr = im.encode_byte_img(b_data)
+    # img_arr = im.encode_byte_img(b_data)
+    img_arr = im.encode_byte_img(b64_data)
 
     # ウィンドウをアップデート
     im.update_window(img_arr)
