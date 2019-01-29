@@ -27,4 +27,5 @@ class LoopThread:
     # スレッドの停止
     def stop(self):
         self._stop_event.set()
-        self._thread.join()  # スレッドが停止するのを待つ
+        # スレッドが停止するのを待つ
+        self._thread.join()

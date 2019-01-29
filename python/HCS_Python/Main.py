@@ -23,7 +23,7 @@ window_w = 100
 # 表示するウィンドウの高さ
 window_h = 100
 
-# 画像を送信した後の待機秒数
+# 画像を送信した後の待機秒数[sec]
 interval = 1
 
 
@@ -48,6 +48,7 @@ def receive_image(client, window_dsp):
 
 
 ### 初期化処理 ###
+
 # ウィンドウ表示
 wd = WindowDisplay(window_w, window_h, "window")
 # Webカメラ操作
@@ -66,11 +67,9 @@ client_rcv.connect()
 
 # マルチスレッド処理宣言
 lt_snd = LoopThread(interval=interval, func=send_image, args=(client_snd, wc))
-# lt_rcv = LoopThread(interval=0.1, func=receive_image, args=(client_rcv, wd))
 
 # マルチスレッド処理開始
 lt_snd.start()
-# lt_rcv.start()
 
 # Ctrl + C で終了
 try:
@@ -79,6 +78,5 @@ try:
         receive_image(client_rcv, wd)
 except KeyboardInterrupt:
     lt_snd.stop()
-    # lt_rcv.stop()
     print('Exit')
     sys.exit(0)
