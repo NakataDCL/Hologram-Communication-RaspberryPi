@@ -8,7 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
 
-public class TCPServer : MonoBehaviour {
+public class ImageReceiveTest : MonoBehaviour {
 
   private string _txtLogFilePath;
   private string _byteLogFilePath;
@@ -30,6 +30,7 @@ public class TCPServer : MonoBehaviour {
     // Serverの待ち受けを開始
     StartServerListening ("127.0.0.1", 8080);
   }
+
   // ソケット接続準備、待機
   protected void StartServerListening (string host, int port) {
     Debug.Log ("ipAddress: " + host + ", port: " + port);
