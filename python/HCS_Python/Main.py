@@ -1,4 +1,5 @@
 import base64
+import cv2
 import sys
 
 
@@ -22,8 +23,8 @@ window_w = 100
 # 表示するウィンドウの高さ
 window_h = 100
 
-# 1秒の間に画像を送信する回数
-rate = 1
+# 画像を送信した後の待機秒数
+interval = 1
 
 
 ### 送受信処理定義 ###
@@ -64,25 +65,20 @@ client_snd.connect()
 client_rcv.connect()
 
 # マルチスレッド処理宣言
-# thread_snd = threading.Thread(target=send_image, args=(client_snd, wc, rate))
-# thread_rcv = threading.Thread(target=receive_image, args=(client_rcv, wd))
-
-lt_snd = LoopThread(interval=1, func=send_image, args=(client_snd, wc))
-lt_rcv = LoopThread(interval=0.1, func=receive_image, args=(client_rcv, wd))
+lt_snd = LoopThread(interval=interval, func=send_image, args=(client_snd, wc))
+# lt_rcv = LoopThread(interval=0.1, func=receive_image, args=(client_rcv, wd))
 
 # マルチスレッド処理開始
-# thread_snd.start()
-# thread_rcv.start()
-
 lt_snd.start()
-lt_rcv.start()
+# lt_rcv.start()
 
 # Ctrl + C で終了
 try:
     while True:
-        pass
+        # cv2.imshow()とcv2.waitKeyはMainスレッドで実行しないといけない
+        receive_image(client_rcv, wd)
 except KeyboardInterrupt:
     lt_snd.stop()
-    lt_rcv.stop()
+    # lt_rcv.stop()
     print('Exit')
     sys.exit(0)

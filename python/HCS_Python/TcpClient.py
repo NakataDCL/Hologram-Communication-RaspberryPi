@@ -29,7 +29,7 @@ class TcpClient:
             # byte配列を送信
             self._client.sendall(byte_arr)
         except OSError:
-            print("error")
+            print("send error")
 
     # byte配列をサーバから受信する
     def receive_byte_arr(self):
@@ -42,5 +42,5 @@ class TcpClient:
             b_data = self._client.recv(arr_size)
             return b_data
         except OSError:
-            print("error")
+            print("receive error")
             return '\x00'

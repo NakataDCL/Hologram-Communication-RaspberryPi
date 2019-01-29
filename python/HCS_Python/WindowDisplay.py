@@ -15,7 +15,7 @@ class WindowDisplay:
         cv2.imshow(self._window_name, img)
         cv2.waitKey(1)
 
-    # byte配列の画像をndarray型に変換する
+        # byte配列の画像をndarray型に変換する
     def encode_byte_img(self, b_img):
         nparr = np.fromstring(b_img, np.uint8)
         img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
