@@ -75,17 +75,17 @@ public class TCPServer : MonoBehaviour {
       Debug.Log ("decode data: " + decodedByte.Length + "[byte]");
 
       // 画像データを保存
-      PngSave (decodedByte);
+      // PngSave (decodedByte);
 
       // 受信したことをクライアントに通知
-      string resMsg = "successfully received";
-      var body = Encoding.UTF8.GetBytes (resMsg);
-      try {
-        Debug.Log ("send message: " + resMsg);
-        stream.Write (body, 0, body.Length);
-      } finally {
-        //_clients.Remove (client);
-      }
+      // string resMsg = "successfully received";
+      // var body = Encoding.UTF8.GetBytes (resMsg);
+      // try {
+      //   Debug.Log ("send message: " + resMsg);
+      //   stream.Write (body, 0, body.Length);
+      // } finally {
+      //   //_clients.Remove (client);
+      // }
 
       // クライアントの接続が切れたら
       if (client.Client.Poll (1000, SelectMode.SelectRead) && (client.Client.Available == 0)) {
