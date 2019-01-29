@@ -78,11 +78,11 @@ public class ScreenStreemingTest : MonoBehaviour {
 			// バイナリのサイズを通知(int: 4[byte])
 			int len = bytes.Length;
 			byte[] b_len = BitConverter.GetBytes (len);
-			Debug.Log (len);
 			stream.Write (b_len, 0, 4);
 
 			// バイナリデータを送信
 			stream.Write (bytes, 0, len);
+			Debug.Log ("send: " + len + "[bytes]");
 
 			// クライアントからのレスポンスを受信
 
