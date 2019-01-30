@@ -7,6 +7,7 @@ using System.Net.Cache;
 using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
+
 public class ReceiveServer : MonoBehaviour {
 	[SerializeField]
 	public int port = 8080;
@@ -15,8 +16,12 @@ public class ReceiveServer : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		// IPアドレスを取得
+		string ipv4 = IPManager.GetIP (ADDRESSFAM.IPv4);
+
 		// Serverの待ち受けを開始
-		StartServerListening ("127.0.0.1", port);
+		// StartServerListening ("127.0.0.1", port);
+		StartServerListening (ipv4, port);
 	}
 
 	// ソケット接続準備、待機
