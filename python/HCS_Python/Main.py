@@ -44,6 +44,13 @@ def receive_image(client, window_dsp):
     window_dsp.update_window(img)
 
 
+### 引数の処理 ###
+args = sys.argv
+if len(args) == 2:
+    # TODO: ipアドレスのマッチング
+    host_ip = str(args[1])
+
+
 ### 初期化処理 ###
 
 # ウィンドウ表示

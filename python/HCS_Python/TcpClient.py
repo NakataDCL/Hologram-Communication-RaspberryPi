@@ -7,12 +7,12 @@ class TcpClient:
         self._ip = host_ip
         self._port = port
         self._client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print("succesfully connected... " +
-              str(self._ip) + ":" + str(self._port))
 
     # Serverへ接続
     def connect(self):
         self._client.connect((self._ip, self._port))
+        print("succesfully connected... " +
+              str(self._ip) + ":" + str(self._port))
 
     # Serverから切断
     def disconnect(self):
