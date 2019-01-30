@@ -26,8 +26,6 @@ public class ReceiveServer : MonoBehaviour {
 		string ipv4 = IPManager.GetIP (ADDRESSFAM.IPv4);
 
 		// Serverの待ち受けを開始
-		//StartServerListening ("127.0.0.1", port);
-		StartServerListening (ipv4, port);
 	}
 
 	// ソケット接続準備、待機
@@ -79,13 +77,12 @@ public class ReceiveServer : MonoBehaviour {
 
 			// この段階のデータをAPIに投げる
 
-			// 受信したバイナリデータ(画像データ)をbase64デコード
-			string base64data = Encoding.UTF8.GetString (b_data_sum);
-			byte[] bytes = Convert.FromBase64String (base64data);
+			// rawデータをbase64エンコードするように修正
+			// string str = Convert.ToBase64String (b_data_sum);
 
 			// 最初の10枚を保存
 			if (_count < 10) {
-				PngSave (bytes);
+				PngSave (b_data_sum);
 				_count++;
 			}
 
