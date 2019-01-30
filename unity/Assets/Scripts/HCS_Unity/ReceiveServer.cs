@@ -26,6 +26,7 @@ public class ReceiveServer : MonoBehaviour {
 		string ipv4 = IPManager.GetIP (ADDRESSFAM.IPv4);
 
 		// Serverの待ち受けを開始
+		StartServerListening (ipv4, port);
 	}
 
 	// ソケット接続準備、待機
