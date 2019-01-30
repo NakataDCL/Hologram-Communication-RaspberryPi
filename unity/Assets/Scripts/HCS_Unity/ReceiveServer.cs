@@ -14,13 +14,19 @@ public class ReceiveServer : MonoBehaviour {
 	private TcpListener _listener;
 	private readonly List<TcpClient> _clients = new List<TcpClient> ();
 
+	private string _pngPath;
+	private int _count = 0;
+
 	// Use this for initialization
 	void Start () {
+		// 画像ファイルの保存先のパスを取得
+		_pngPath = Application.dataPath + "/Img/img";
+
 		// IPアドレスを取得
 		string ipv4 = IPManager.GetIP (ADDRESSFAM.IPv4);
 
 		// Serverの待ち受けを開始
-		// StartServerListening ("127.0.0.1", port);
+		//StartServerListening ("127.0.0.1", port);
 		StartServerListening (ipv4, port);
 	}
 
@@ -55,14 +61,33 @@ public class ReceiveServer : MonoBehaviour {
 			int data_size = BitConverter.ToInt32 (b_data_size, 0);
 
 			// バイナリデータを受信
-			byte[] b_data = new byte[data_size];
-			stream.Read (b_data, 0, data_size);
+			int rest = data_size;
+			byte[] b_data_sum = new byte[data_size];
+			int read_size_sum = 0;
+			while (rest > 0) {
+				byte[] b_data = new byte[1024];
+				int read_size = 0;
+				if (rest >= 1024) {
+					read_size = stream.Read (b_data, 0, 1024);
+				} else {
+					read_size = stream.Read (b_data, 0, rest);
+				}
+				Array.Copy (b_data, 0, b_data_sum, read_size_sum, read_size);
+				rest -= read_size;
+				read_size_sum += read_size;
+			}
+
+			// この段階のデータをAPIに投げる
 
 			// 受信したバイナリデータ(画像データ)をbase64デコード
-			string base64data = Encoding.UTF8.GetString (b_data);
+			string base64data = Encoding.UTF8.GetString (b_data_sum);
 			byte[] bytes = Convert.FromBase64String (base64data);
 
-			// これをAPIに投げる
+			// 最初の10枚を保存
+			if (_count < 10) {
+				PngSave (bytes);
+				_count++;
+			}
 
 			// クライアントの接続が切れた場合
 			if (client.Client.Poll (1000, SelectMode.SelectRead) && (client.Client.Available == 0)) {
@@ -81,5 +106,18 @@ public class ReceiveServer : MonoBehaviour {
 		}
 
 		_listener.Stop ();
+	}
+
+	public void PngSave (byte[] b) {
+		Debug.Log ("save image");
+
+		FileInfo fi = new FileInfo (_pngPath + _count + ".png");
+
+		FileStream fs = fi.Create ();
+		BinaryWriter writer = new BinaryWriter (fs, Encoding.UTF8);
+
+		writer.Write (b);
+		writer.Flush ();
+		writer.Close ();
 	}
 }
