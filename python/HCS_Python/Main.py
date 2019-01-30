@@ -1,4 +1,3 @@
-import base64
 import cv2
 import sys
 
@@ -19,9 +18,9 @@ port_snd = 8080
 port_rcv = 8081
 
 # 表示するウィンドウの幅
-window_w = 100
+window_w = 640
 # 表示するウィンドウの高さ
-window_h = 100
+window_h = 480
 
 # 画像を送信した後の待機秒数[sec]
 interval = 1
@@ -32,10 +31,8 @@ interval = 1
 def send_image(client, webcam_cnt):
     # Webカメラ画像を取得
     img = webcam_cnt.get_camera_image()
-    # 画像をbase64エンコード
-    b64_img = base64.b64encode(img)
     # データをサーバに送信
-    client.send_byte_arr(b64_img)
+    client.send_byte_arr(img)
 
 
 def receive_image(client, window_dsp):
@@ -45,6 +42,13 @@ def receive_image(client, window_dsp):
     img = window_dsp.encode_byte_img(b_img)
     # ウィンドウをアップデート
     window_dsp.update_window(img)
+
+
+### 引数の処理 ###
+args = sys.argv
+if len(args) == 2:
+    # TODO: ipアドレスのマッチング
+    host_ip = str(args[1])
 
 
 ### 初期化処理 ###
