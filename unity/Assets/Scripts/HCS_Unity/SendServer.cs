@@ -19,8 +19,12 @@ public class SendServer : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		// IPアドレスを取得
+		string ipv4 = IPManager.GetIP (ADDRESSFAM.IPv4);
+
 		// Serverの待ち受けを開始
-		StartServerListening ("127.0.0.1", port);
+		//StartServerListening ("127.0.0.1", port);
+		StartServerListening (ipv4, port);
 	}
 
 	// Update is called once per frame
