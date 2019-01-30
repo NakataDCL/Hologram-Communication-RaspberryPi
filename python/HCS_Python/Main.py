@@ -18,9 +18,9 @@ port_snd = 8080
 port_rcv = 8081
 
 # 表示するウィンドウの幅
-window_w = 500
+window_w = 640
 # 表示するウィンドウの高さ
-window_h = 500
+window_h = 480
 
 # 画像を送信した後の待機秒数[sec]
 interval = 1
