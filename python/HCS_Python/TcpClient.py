@@ -37,10 +37,20 @@ class TcpClient:
             # 受信するbyte配列のサイズを取得(int: 4[byte])
             b_arr_size = self._client.recv(4)
             arr_size = int.from_bytes(b_arr_size, "little")
-
             # byte配列を受信
-            b_data = self._client.recv(arr_size)
-            return b_data
+            rest = arr_size
+            b_data_sum = bytes()
+            while True:
+                b_data = bytes()
+                if rest == 0:
+                    break
+                elif rest >= 1024:
+                    b_data = self._client.recv(1024)
+                else:
+                    b_data = self._client.recv(rest)
+                b_data_sum += b_data
+                rest -= len(b_data)
+            return b_data_sum
         except OSError:
             print("receive error")
             return '\x00'
