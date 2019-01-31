@@ -23,8 +23,10 @@ public class ReceiveServer : MonoBehaviour {
 
 		// Serverの待ち受けを開始
 		//StartServerListening ("127.0.0.1", port);
-		StartServerListening (ipv4, port);
-		//StartServerListening ("192.168.10.33", port);
+		//StartServerListening (ipv4, port);
+
+		// Private IPじゃないと動かない場合
+		StartServerListening (IPManager.GetPrivateIP (), port);
 	}
 
 	// ソケット接続準備、待機
