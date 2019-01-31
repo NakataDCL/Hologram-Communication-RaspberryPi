@@ -17,14 +17,19 @@ public class SendServer : MonoBehaviour {
 	private Texture2D _texture = null;
 	private byte[] _b_screenshot;
 
+	// key: playerId, Value: Screenshot
+	private Dictionary<int, Texture2D> _screenshot_dict = new Dictionary<int, Texture2D> ();
+
 	// Use this for initialization
 	void Start () {
 		// IPアドレスを取得
 		string ipv4 = IPManager.GetIP (ADDRESSFAM.IPv4);
 
 		// Serverの待ち受けを開始
-		//StartServerListening ("127.0.0.1", port);
-		StartServerListening (ipv4, port);
+		StartServerListening ("127.0.0.1", port);
+		//StartServerListening (ipv4, port);
+		//StartServerListening ("192.168.10.33", port);
+
 	}
 
 	// Update is called once per frame
@@ -55,6 +60,10 @@ public class SendServer : MonoBehaviour {
 		_clients.Add (client);
 		Debug.Log ("Connect: " + client.Client.RemoteEndPoint);
 
+		// ClientをClientManagerに登録する
+		Debug.Log (client.Client.RemoteEndPoint.ToString ());
+		ClientManager.Instance.RegisterClient (client.Client.RemoteEndPoint.ToString ());
+
 		// 接続が確立したら次の人を受け付ける
 		listener.BeginAcceptSocket (DoAcceptTcpClientCallback, listener);
 
@@ -66,6 +75,9 @@ public class SendServer : MonoBehaviour {
 			if (_b_screenshot == null || _b_screenshot.Length <= 0) {
 				continue;
 			}
+
+			// ここでカメラからスクショを取得する
+			// Texture2D _b_screenshot = GetScreenshot(0);
 
 			// バイト配列(画像データ)のサイズを通知(int: 4[byte])
 			int data_size = _b_screenshot.Length;
@@ -102,5 +114,9 @@ public class SendServer : MonoBehaviour {
 		// textureに適用
 		_texture.ReadPixels (new Rect (0, 0, Screen.width, Screen.height), 0, 0);
 		_texture.Apply ();
+	}
+
+	public void SendScreenshot () {
+		return;
 	}
 }
