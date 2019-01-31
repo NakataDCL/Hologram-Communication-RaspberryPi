@@ -38,6 +38,16 @@ public class IPManager {
 		}
 		return output;
 	}
+
+	public static string GetPrivateIP () {
+		//ホスト名を取得する
+		string hostname = Dns.GetHostName ();
+
+		// ホスト名からIPアドレスを取得する
+		IPAddress[] adrList = Dns.GetHostAddresses (hostname);
+
+		return adrList[0].ToString ();
+	}
 }
 
 public enum ADDRESSFAM {

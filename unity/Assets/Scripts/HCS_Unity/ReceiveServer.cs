@@ -16,23 +16,17 @@ public class ReceiveServer : MonoBehaviour {
 	private TcpListener _listener;
 	private readonly List<TcpClient> _clients = new List<TcpClient> ();
 
-	private byte[] b_img;
-
-	private string _pngPath;
-	private int _count = 0;
-
 	// Use this for initialization
 	void Start () {
-		// 画像ファイルの保存先のパスを取得
-		_pngPath = Application.dataPath + "/Img/img";
-
 		// IPアドレスを取得
 		string ipv4 = IPManager.GetIP (ADDRESSFAM.IPv4);
 
 		// Serverの待ち受けを開始
 		//StartServerListening ("127.0.0.1", port);
-		StartServerListening (ipv4, port);
-		//StartServerListening ("192.168.10.33", port);
+		//StartServerListening (ipv4, port);
+
+		// Private IPじゃないと動かない場合
+		StartServerListening (IPManager.GetPrivateIP (), port);
 	}
 
 	// ソケット接続準備、待機
@@ -95,12 +89,6 @@ public class ReceiveServer : MonoBehaviour {
 			// Base64データを登録
 			cm.SetBase64WebcamImage (clientIP, b64_data);
 
-			// 最初の10枚を保存
-			if (_count < 10) {
-				PngSave (b_data_sum);
-				_count++;
-			}
-
 			// クライアントの接続が切れた場合
 			if (client.Client.Poll (1000, SelectMode.SelectRead) && (client.Client.Available == 0)) {
 				Debug.Log ("Disconnect: " + client.Client.RemoteEndPoint);
@@ -118,19 +106,5 @@ public class ReceiveServer : MonoBehaviour {
 		}
 
 		_listener.Stop ();
-	}
-
-	// デバッグ用: 送信された画像をPNG形式で保存する
-	public void PngSave (byte[] b) {
-		Debug.Log ("save image");
-
-		FileInfo fi = new FileInfo (_pngPath + _count + ".png");
-
-		FileStream fs = fi.Create ();
-		BinaryWriter writer = new BinaryWriter (fs, Encoding.UTF8);
-
-		writer.Write (b);
-		writer.Flush ();
-		writer.Close ();
 	}
 }
