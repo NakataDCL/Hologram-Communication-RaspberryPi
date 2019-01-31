@@ -13,7 +13,9 @@ class WindowDisplay:
 
     def update_window(self, img):
         cv2.imshow(self._window_name, img)
-        cv2.waitKey(1)
+        cv2.namedWindow(self._window_name, cv2.WND_PROP_FULLSCREEN)
+        cv2.setWindowProperty(
+            self._window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
         # byte配列の画像をndarray型に変換する
     def encode_byte_img(self, b_img):

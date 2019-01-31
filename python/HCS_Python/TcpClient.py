@@ -8,6 +8,9 @@ class TcpClient:
         self._port = port
         self._client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+    def __del__(self):
+        self.disconnect()
+
     # Serverへ接続
     def connect(self):
         self._client.connect((self._ip, self._port))

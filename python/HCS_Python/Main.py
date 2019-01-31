@@ -80,7 +80,13 @@ try:
     while True:
         # cv2.imshow()とcv2.waitKeyはMainスレッドで実行しないといけない
         receive_image(client_rcv, wd)
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord('q'):
+            lt_snd.stop()
+            break
 except KeyboardInterrupt:
     lt_snd.stop()
     print('Exit')
     sys.exit(0)
+
+print('Exit')
