@@ -11,6 +11,9 @@ using UnityEngine.UI;
 
 public class SendServer : MonoBehaviour {
 	[SerializeField]
+	public ClientManager cm;
+
+	[SerializeField]
 	public int port = 8081;
 	private TcpListener _listener;
 	private readonly List<TcpClient> _clients = new List<TcpClient> ();
@@ -58,11 +61,10 @@ public class SendServer : MonoBehaviour {
 		TcpListener listener = (TcpListener) ar.AsyncState;
 		TcpClient client = listener.EndAcceptTcpClient (ar);
 		_clients.Add (client);
-		Debug.Log ("Connect: " + client.Client.RemoteEndPoint);
 
 		// ClientをClientManagerに登録する
-		Debug.Log (client.Client.RemoteEndPoint.ToString ());
-		ClientManager.Instance.RegisterClient (client.Client.RemoteEndPoint.ToString ());
+		string endPoint = client.Client.RemoteEndPoint.ToString ();
+		cm.RegisterClient (endPoint.Split (':') [0]);
 
 		// 接続が確立したら次の人を受け付ける
 		listener.BeginAcceptSocket (DoAcceptTcpClientCallback, listener);

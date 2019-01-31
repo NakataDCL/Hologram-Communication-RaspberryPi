@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClientManager : SingletonMonoBehaviour<ClientManager> {
+public class ClientManager : MonoBehaviour {
 	private Dictionary<string, int> _clientIP_to_playerID;
 	private Dictionary<int, byte[]> _playerID_to_b64WebcamImg;
 	private Dictionary<int, byte[]> _playerID_to_screenshot;
 
 	// Playerの総数
 	private int _clientNum = 0;
+
+	// RegisterClientの排他制御用
+	static object lockObj = new object ();
 
 	// Use this for initialization
 	void Start () {
@@ -19,13 +22,14 @@ public class ClientManager : SingletonMonoBehaviour<ClientManager> {
 
 	// Clientを登録し、PlayerIDを割り当てる
 	public void RegisterClient (string clientIP) {
-		if (!_clientIP_to_playerID.ContainsKey (clientIP)) {
-			int newPlayerID = _clientNum;
-			_clientIP_to_playerID[clientIP] = newPlayerID;
-			_clientNum++;
-			Debug.Log ("IP: " + clientIP + " を登録しました(playerID: " + newPlayerID + ")");
-		} else {
-			Debug.Log ("IP: " + clientIP + " のclientは既に存在します(playerID: " + _clientIP_to_playerID[clientIP] + ")");
+		lock (lockObj) {
+			if (!_clientIP_to_playerID.ContainsKey (clientIP)) {
+				int newPlayerID = _clientNum++;
+				_clientIP_to_playerID[clientIP] = newPlayerID;
+				Debug.Log ("IP: " + clientIP + " を登録しました(playerID: " + newPlayerID + ")");
+			} else {
+				Debug.Log ("IP: " + clientIP + " のclientは既に存在します(playerID: " + _clientIP_to_playerID[clientIP] + ")");
+			}
 		}
 	}
 
