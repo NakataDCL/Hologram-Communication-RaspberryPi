@@ -30,8 +30,8 @@ public class ReceiveServer : MonoBehaviour {
 		string ipv4 = IPManager.GetIP (ADDRESSFAM.IPv4);
 
 		// Serverの待ち受けを開始
-		StartServerListening ("127.0.0.1", port);
-		//StartServerListening (ipv4, port);
+		//StartServerListening ("127.0.0.1", port);
+		StartServerListening (ipv4, port);
 		//StartServerListening ("192.168.10.33", port);
 	}
 
@@ -51,9 +51,12 @@ public class ReceiveServer : MonoBehaviour {
 		TcpClient client = listener.EndAcceptTcpClient (ar);
 		_clients.Add (client);
 
-		// ClientをClientManagerに登録する
+		// ClientのIPアドレスを取得		
 		string endPoint = client.Client.RemoteEndPoint.ToString ();
-		cm.RegisterClient (endPoint.Split (':') [0]);
+		string clientIP = endPoint.Split (':') [0];
+
+		// ClientをClientManagerに登録する
+		cm.RegisterClient (clientIP);
 
 		// 接続が確立したら次の人を受け付ける
 		listener.BeginAcceptSocket (DoAcceptTcpClientCallback, listener);
@@ -85,8 +88,12 @@ public class ReceiveServer : MonoBehaviour {
 				read_size_sum += read_size;
 			}
 
-			// rawデータをbase64エンコードするように修正
-			// string str = Convert.ToBase64String (b_data_sum);
+			// byteデータをBase64エンコード
+			string b64_str = Convert.ToBase64String (b_data_sum);
+			byte[] b64_data = System.Text.Encoding.UTF8.GetBytes (b64_str);
+
+			// Base64データを登録
+			cm.SetBase64WebcamImage (clientIP, b64_data);
 
 			// 最初の10枚を保存
 			if (_count < 10) {

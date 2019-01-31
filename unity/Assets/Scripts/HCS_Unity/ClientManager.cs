@@ -7,6 +7,8 @@ public class ClientManager : MonoBehaviour {
 	private ConcurrentDictionary<int, byte[]> _playerID_to_b64WebcamImg;
 	private ConcurrentDictionary<int, byte[]> _playerID_to_screenshot;
 
+	// TODO: 通信相手を記録する機能
+
 	// Playerの総数
 	private int _clientNum = 0;
 
@@ -76,6 +78,29 @@ public class ClientManager : MonoBehaviour {
 			return newPlayerID;
 		} else {
 			return _clientIP_to_playerID[clientIP];
+		}
+	}
+
+	// **要修正**
+	// 通信相手のプレイヤーIDを取得
+	public int GetParterPlayerID (string clientIP) {
+		int playerID = GetPlayerID (clientIP);
+
+		if (playerID == 0) {
+			// playerID=0
+			if (_clientNum == 2) {
+				return 1;
+			} else {
+				// 相手が存在しない場合
+				return -1;
+			}
+
+		} else if (playerID == 1) {
+			// playerID = 1	
+			return 0;
+
+		} else {
+			return -1;
 		}
 	}
 
