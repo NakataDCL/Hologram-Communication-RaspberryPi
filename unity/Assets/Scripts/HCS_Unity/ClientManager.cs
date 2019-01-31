@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ClientManager : MonoBehaviour {
-	private Dictionary<string, int> _clientIP_to_playerID;
-	private Dictionary<int, byte[]> _playerID_to_b64WebcamImg;
-	private Dictionary<int, byte[]> _playerID_to_screenshot;
+	private ConcurrentDictionary<string, int> _clientIP_to_playerID;
+	private ConcurrentDictionary<int, byte[]> _playerID_to_b64WebcamImg;
+	private ConcurrentDictionary<int, byte[]> _playerID_to_screenshot;
 
 	// Playerの総数
 	private int _clientNum = 0;
@@ -15,9 +15,9 @@ public class ClientManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		_clientIP_to_playerID = new Dictionary<string, int> ();
-		_playerID_to_b64WebcamImg = new Dictionary<int, byte[]> ();
-		_playerID_to_screenshot = new Dictionary<int, byte[]> ();
+		_clientIP_to_playerID = new ConcurrentDictionary<string, int> ();
+		_playerID_to_b64WebcamImg = new ConcurrentDictionary<int, byte[]> ();
+		_playerID_to_screenshot = new ConcurrentDictionary<int, byte[]> ();
 	}
 
 	// Clientを登録し、PlayerIDを割り当てる
