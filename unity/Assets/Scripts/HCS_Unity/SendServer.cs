@@ -11,11 +11,17 @@ using UnityEngine.UI;
 
 public class SendServer : MonoBehaviour {
 	[SerializeField]
+	public ClientManager cm;
+
+	[SerializeField]
 	public int port = 8081;
 	private TcpListener _listener;
 	private readonly List<TcpClient> _clients = new List<TcpClient> ();
 	private Texture2D _texture = null;
 	private byte[] _b_screenshot;
+
+	// key: playerId, Value: Screenshot
+	private Dictionary<int, Texture2D> _screenshot_dict = new Dictionary<int, Texture2D> ();
 
 	// Use this for initialization
 	void Start () {
@@ -25,6 +31,7 @@ public class SendServer : MonoBehaviour {
 		// Serverの待ち受けを開始
 		//StartServerListening ("127.0.0.1", port);
 		StartServerListening (ipv4, port);
+		//StartServerListening ("192.168.10.33", port);
 	}
 
 	// Update is called once per frame
@@ -53,7 +60,13 @@ public class SendServer : MonoBehaviour {
 		TcpListener listener = (TcpListener) ar.AsyncState;
 		TcpClient client = listener.EndAcceptTcpClient (ar);
 		_clients.Add (client);
-		Debug.Log ("Connect: " + client.Client.RemoteEndPoint);
+
+		// ClientのIPアドレスを取得		
+		string endPoint = client.Client.RemoteEndPoint.ToString ();
+		string clientIP = endPoint.Split (':') [0];
+
+		// ClientをClientManagerに登録する
+		cm.RegisterClient (clientIP);
 
 		// 接続が確立したら次の人を受け付ける
 		listener.BeginAcceptSocket (DoAcceptTcpClientCallback, listener);
@@ -67,13 +80,25 @@ public class SendServer : MonoBehaviour {
 				continue;
 			}
 
-			// バイト配列(画像データ)のサイズを通知(int: 4[byte])
-			int data_size = _b_screenshot.Length;
-			byte[] b_data_size = BitConverter.GetBytes (data_size);
-			stream.Write (b_data_size, 0, 4);
+			// for debug
+			// スクリーンショットを登録
+			cm.SetScreenshot (cm.GetPlayerID (clientIP), _b_screenshot);
+			// \for debug
 
-			// バイト配列を送信
-			stream.Write (_b_screenshot, 0, data_size);
+			// 通信相手のスクリーンショットを取得
+			int parterPlayerID = cm.GetParterPlayerID (clientIP);
+			byte[] b_screenshot = cm.GetScreenshot (parterPlayerID);
+
+			// 通信相手のスクリーンショットが存在する場合は送信する
+			if (b_screenshot != null) {
+				// バイト配列(画像データ)のサイズを通知(int: 4[byte])
+				int data_size = _b_screenshot.Length;
+				byte[] b_data_size = BitConverter.GetBytes (data_size);
+				stream.Write (b_data_size, 0, 4);
+
+				// バイト配列を送信
+				stream.Write (_b_screenshot, 0, data_size);
+			}
 
 			// クライアントの接続が切れたら
 			if (client.Client.Poll (1000, SelectMode.SelectRead) && (client.Client.Available == 0)) {
@@ -102,5 +127,9 @@ public class SendServer : MonoBehaviour {
 		// textureに適用
 		_texture.ReadPixels (new Rect (0, 0, Screen.width, Screen.height), 0, 0);
 		_texture.Apply ();
+	}
+
+	public void SendScreenshot () {
+		return;
 	}
 }

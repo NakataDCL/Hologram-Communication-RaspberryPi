@@ -10,9 +10,13 @@ using UnityEngine;
 
 public class ReceiveServer : MonoBehaviour {
 	[SerializeField]
+	public ClientManager cm;
+	[SerializeField]
 	public int port = 8080;
 	private TcpListener _listener;
 	private readonly List<TcpClient> _clients = new List<TcpClient> ();
+
+	private byte[] b_img;
 
 	private string _pngPath;
 	private int _count = 0;
@@ -26,7 +30,9 @@ public class ReceiveServer : MonoBehaviour {
 		string ipv4 = IPManager.GetIP (ADDRESSFAM.IPv4);
 
 		// Serverの待ち受けを開始
+		//StartServerListening ("127.0.0.1", port);
 		StartServerListening (ipv4, port);
+		//StartServerListening ("192.168.10.33", port);
 	}
 
 	// ソケット接続準備、待機
@@ -44,7 +50,13 @@ public class ReceiveServer : MonoBehaviour {
 		TcpListener listener = (TcpListener) ar.AsyncState;
 		TcpClient client = listener.EndAcceptTcpClient (ar);
 		_clients.Add (client);
-		Debug.Log ("Connect: " + client.Client.RemoteEndPoint);
+
+		// ClientのIPアドレスを取得		
+		string endPoint = client.Client.RemoteEndPoint.ToString ();
+		string clientIP = endPoint.Split (':') [0];
+
+		// ClientをClientManagerに登録する
+		cm.RegisterClient (clientIP);
 
 		// 接続が確立したら次の人を受け付ける
 		listener.BeginAcceptSocket (DoAcceptTcpClientCallback, listener);
@@ -76,10 +88,12 @@ public class ReceiveServer : MonoBehaviour {
 				read_size_sum += read_size;
 			}
 
-			// この段階のデータをAPIに投げる
+			// byteデータをBase64エンコード
+			string b64_str = Convert.ToBase64String (b_data_sum);
+			byte[] b64_data = System.Text.Encoding.UTF8.GetBytes (b64_str);
 
-			// rawデータをbase64エンコードするように修正
-			// string str = Convert.ToBase64String (b_data_sum);
+			// Base64データを登録
+			cm.SetBase64WebcamImage (clientIP, b64_data);
 
 			// 最初の10枚を保存
 			if (_count < 10) {
@@ -106,6 +120,7 @@ public class ReceiveServer : MonoBehaviour {
 		_listener.Stop ();
 	}
 
+	// デバッグ用: 送信された画像をPNG形式で保存する
 	public void PngSave (byte[] b) {
 		Debug.Log ("save image");
 
