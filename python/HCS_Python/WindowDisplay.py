@@ -22,11 +22,12 @@ class WindowDisplay:
             ratio = self._dspW / img_w
         else:
             ratio = self._dspH / img_h
-        try:
-            resized_img = cv2.resize(img, None, fx=ratio, fy=ratio)
-            cv2.imshow("HTC", resized_img)
-        except:
-            print("resize error")
+
+        resized_img = cv2.resize(img, None, fx=ratio, fy=ratio)
+        cv2.imshow("HTC", resized_img)
+        cv2.namedWindow(self._window_name, cv2.WND_PROP_FULLSCREEN)
+        cv2.setWindowProperty(self._window_name, cv2.WND_PROP_FULLSCREEN,
+                              cv2.WINDOW_FULLSCREEN)
 
     # byte配列の画像をndarray型に変換する
     def encode_byte_img(self, b_img):
