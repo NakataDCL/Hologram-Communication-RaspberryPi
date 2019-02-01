@@ -44,8 +44,11 @@ def receive_image(client, window_dsp):
     b_img = client.receive_byte_arr()
     # ndarrayに変換
     img = window_dsp.encode_byte_img(b_img)
+    # フルスクリーン画像に変換
+    fullscreen_img = window_dsp.create_fullscreen_img(img)
     # ウィンドウをアップデート
-    window_dsp.update_window(img)
+    # window_dsp.update_fullscreen_window(fullscreen_img)
+    window_dsp.update_window(fullscreen_img)
 
 
 ### 引数の処理 ###
