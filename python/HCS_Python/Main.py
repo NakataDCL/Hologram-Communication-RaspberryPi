@@ -98,5 +98,8 @@ except KeyboardInterrupt:
     lt_snd.stop()
     print('Exit')
     sys.exit(0)
+except:
+    print('Error')
+    sys.exit(-1)
 
 print('Exit')
