@@ -17,9 +17,11 @@ class TcpClient:
         self._client.connect((self._ip, self._port))
         print("succesfully connected... " +
               str(self._ip) + ":" + str(self._port))
+        self._client.settimeout(10)
 
     # Serverから切断
     def disconnect(self):
+        print("disconnect")
         self._client.close()
 
     # byte配列をサーバに送信する
@@ -58,4 +60,4 @@ class TcpClient:
             return b_data_sum
         except OSError:
             print("receive error")
-            return '\x00'
+            sys.exit(1)

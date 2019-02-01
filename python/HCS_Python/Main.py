@@ -92,6 +92,7 @@ try:
             break
         # 通信が切断された場合終了
         if not lt_snd.is_alive():
+            print("send thread is not alive")
             break
 except KeyboardInterrupt:
     lt_snd.stop()
