@@ -29,3 +29,6 @@ class LoopThread:
         self._stop_event.set()
         # スレッドが停止するのを待つ
         self._thread.join()
+
+    def is_alive(self):
+        return self._thread.is_alive()

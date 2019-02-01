@@ -86,8 +86,12 @@ try:
         # cv2.imshow()とcv2.waitKeyはMainスレッドで実行しないといけない
         receive_image(client_rcv, wd)
         key = cv2.waitKey(1) & 0xFF
+        # 'Q'が入力された場合終了
         if key == ord('q'):
             lt_snd.stop()
+            break
+        # 通信が切断された場合終了
+        if not lt_snd.is_alive():
             break
 except KeyboardInterrupt:
     lt_snd.stop()

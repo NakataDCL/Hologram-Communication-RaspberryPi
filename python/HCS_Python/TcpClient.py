@@ -1,5 +1,6 @@
 import socket
 import base64
+import sys
 
 
 class TcpClient:
@@ -33,6 +34,7 @@ class TcpClient:
             self._client.sendall(byte_arr)
         except OSError:
             print("send error")
+            sys.exit(1)
 
     # byte配列をサーバから受信する
     def receive_byte_arr(self):
