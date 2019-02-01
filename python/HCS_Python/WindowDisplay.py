@@ -35,10 +35,10 @@ class WindowDisplay:
         x_offset = y_offset = 0
         if img_h > img_w:
             ratio = self._dspW / img_w
-            y_offset = int((self._dspH - img_h)/2)
+            y_offset = int((self._dspH - img_h*ratio)/2)
         else:
             ratio = self._dspH / img_h
-            x_offset = int((self._dspW - img_w)/2)
+            x_offset = int((self._dspW - img_w*ratio)/2)
         resized_img = cv2.resize(img, None, fx=ratio, fy=ratio)
         # フルスクリーン画像を生成
         fullscreen_img = np.zeros((self._dspH, self._dspW, 3), np.uint8)
