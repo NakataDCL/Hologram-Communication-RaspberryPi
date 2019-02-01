@@ -17,7 +17,7 @@ class TcpClient:
         self._client.connect((self._ip, self._port))
         print("succesfully connected... " +
               str(self._ip) + ":" + str(self._port))
-        self._client.settimeout(10)
+        # self._client.settimeout(10)
 
     # Serverから切断
     def disconnect(self):
