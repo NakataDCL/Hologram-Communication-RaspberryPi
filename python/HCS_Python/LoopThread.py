@@ -14,6 +14,7 @@ class LoopThread:
         self._stop_event = threading.Event()
         # スレッドの作成
         self._thread = threading.Thread(target=self.target)
+        self._thread.setDaemon(True)
 
     def target(self):
         while not self._stop_event.is_set():
@@ -29,3 +30,6 @@ class LoopThread:
         self._stop_event.set()
         # スレッドが停止するのを待つ
         self._thread.join()
+
+    def is_alive(self):
+        return self._thread.is_alive()

@@ -1,5 +1,6 @@
 import socket
 import base64
+import sys
 
 
 class TcpClient:
@@ -8,14 +9,19 @@ class TcpClient:
         self._port = port
         self._client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+    def __del__(self):
+        self.disconnect()
+
     # Serverへ接続
     def connect(self):
         self._client.connect((self._ip, self._port))
         print("succesfully connected... " +
               str(self._ip) + ":" + str(self._port))
+        # self._client.settimeout(10)
 
     # Serverから切断
     def disconnect(self):
+        print("disconnect")
         self._client.close()
 
     # byte配列をサーバに送信する
@@ -30,6 +36,7 @@ class TcpClient:
             self._client.sendall(byte_arr)
         except OSError:
             print("send error")
+            sys.exit(1)
 
     # byte配列をサーバから受信する
     def receive_byte_arr(self):
@@ -53,4 +60,4 @@ class TcpClient:
             return b_data_sum
         except OSError:
             print("receive error")
-            return '\x00'
+            sys.exit(1)
