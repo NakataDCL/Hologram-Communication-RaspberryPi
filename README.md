@@ -10,8 +10,11 @@ Hologram Communication System における、Raspberry Piに関連する以下�
 
 ## 成果物
 ・[Client(Python)](https://github.com/NakataDCL/Hologram-Communication-RaspberryPi/tree/master/python/HCS_Python)
+
 Raspberry Pi上で動作する。
 
 ・[Server(C#)](https://github.com/NakataDCL/Hologram-Communication-RaspberryPi/tree/master/unity/Assets/Scripts/HCS_Unity)
+
+サーバマシン(Win, Mac)上のUnityプロジェクト内で動作する。
 
 以上の2つを[本体](https://github.com/DCL-Waseda/Hologram-Communication)と統合した
